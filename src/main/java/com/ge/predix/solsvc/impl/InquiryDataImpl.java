@@ -261,7 +261,7 @@ public class InquiryDataImpl implements InquiryDataAPI {
 		return handleResult(createDataGrid());
 	}
 
-	@SuppressWarnings({ "nls", "unchecked" })
+//	@SuppressWarnings({ "nls", "unchecked" })
 	private String createDataGrid() {
 		String newInfo = "";
 		StringBuilder dataJson = new StringBuilder("[");
@@ -285,29 +285,29 @@ public class InquiryDataImpl implements InquiryDataAPI {
 			dataJson.append(element.getMeasure());
 			dataJson.append("\",\"Status\":\"");
 			if (element.getMeasure() <= 35) {
-				dataJson.append("good");
+				dataJson.append("GREEN");
 			}
 			else if(element.getMeasure()<=75){
-				dataJson.append("normal");
+				dataJson.append("YELLOW");
 			}
 			else if(element.getMeasure()<=115){
-				dataJson.append("slightly polluted");
+				dataJson.append("ORANGE");
 			}
 			else if(element.getMeasure()<=150){
-				dataJson.append("mediumly polluted");
+				dataJson.append("RED");
 			}
 			else if(element.getMeasure()<=250){
-				dataJson.append("severely polluted");
+				dataJson.append("VIOLET");
 			}
 			else{
-				dataJson.append("extremely polluted");
+				dataJson.append("BROWN");
 			}
 			dataJson.append("\",\"UpdateTime\":\"");
 			dataJson.append(element.getUpdateTime());
 			dataJson.append("\",\"Latitude\":\"");
-			dataJson.append(element.getyValue());
+			dataJson.append(element.getyValue().substring(0, 8));
 			dataJson.append("\",\"Longitude\":\"");
-			dataJson.append(element.getxValue());
+			dataJson.append(element.getxValue().substring(0, 8));
 			dataJson.append("\"},");
 		}
 		dataJson.deleteCharAt(dataJson.length() - 1);
