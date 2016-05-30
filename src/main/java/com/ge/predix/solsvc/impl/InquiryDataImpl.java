@@ -185,7 +185,7 @@ public class InquiryDataImpl implements InquiryDataAPI {
 			tag.setName(entryTag);
 			tag.setLimit(taglimit);
 			tag.setOrder(tagorder);
-			tag.setAggregations(aggregations);
+//			tag.setAggregations(aggregations);
 			tags.add(tag);
 		}
 		datapointsQuery.setTags(tags);
