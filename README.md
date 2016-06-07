@@ -1,3 +1,6 @@
+https://cdz-inquiry-timeseries-service.run.aws-usw02-pr.ice.predix.io/services/pm25services/weekly_data/sensor_id/{id}
+
+
 Predix Development Kit Winddata Time Series Service
 ==================================================
 

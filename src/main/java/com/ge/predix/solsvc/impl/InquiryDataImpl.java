@@ -110,6 +110,23 @@ public class InquiryDataImpl implements InquiryDataAPI {
 		return handleResult(response);
 	}
 
+	@Override
+	public Response getWeeklyPm25DataPoints(String id, String authorization, String starttime, String taglimit,
+			String tagorder) {
+		if (id == null) {
+			return null;
+		}
+	
+		List<Header> headers = generateHeaders();
+	
+		DatapointsQuery dpQuery = buildDatapointsQueryRequestWithAggregation(id, starttime, getInteger(taglimit), tagorder);
+		DatapointsResponse response = this.timeseriesFactory.queryForDatapoints(this.timeseriesRestConfig.getBaseUrl(),
+				dpQuery, headers);
+		log.debug(response.toString());
+	
+		return handleResult(response);
+	}
+
 	/**
 	 * 
 	 * @param s
@@ -175,9 +192,35 @@ public class InquiryDataImpl implements InquiryDataAPI {
 		// datapointsQuery.setStart("1y-ago"); //$NON-NLS-1$
 		String[] tagArray = id.split(","); //$NON-NLS-1$
 		List<String> entryTags = Arrays.asList(tagArray);
+		List<Aggregation> aggregations = new ArrayList<Aggregation>();
+		for (String entryTag : entryTags) {
+			com.ge.predix.timeseries.entity.datapoints.queryrequest.Tag tag = new com.ge.predix.timeseries.entity.datapoints.queryrequest.Tag();
+			tag.setName(entryTag);
+			tag.setLimit(taglimit);
+			tag.setOrder(tagorder);
+			tags.add(tag);
+		}
+		datapointsQuery.setTags(tags);
+		return datapointsQuery;
+	}
+	/**
+	 * 
+	 * @param id
+	 * @param startDuration
+	 * @param tagorder
+	 * @return
+	 */
+	private DatapointsQuery buildDatapointsQueryRequestWithAggregation(String id, String startDuration, int taglimit,
+			String tagorder) {
+		DatapointsQuery datapointsQuery = new DatapointsQuery();
+		List<com.ge.predix.timeseries.entity.datapoints.queryrequest.Tag> tags = new ArrayList<com.ge.predix.timeseries.entity.datapoints.queryrequest.Tag>();
+		datapointsQuery.setStart(startDuration);
+		// datapointsQuery.setStart("1y-ago"); //$NON-NLS-1$
+		String[] tagArray = id.split(","); //$NON-NLS-1$
+		List<String> entryTags = Arrays.asList(tagArray);
 		Aggregation aggregation = new Aggregation();
 		aggregation.setType("avg");
-		aggregation.setInterval("1h");
+		aggregation.setInterval("1d");
 		List<Aggregation> aggregations = new ArrayList<Aggregation>();
 		aggregations.add(aggregation);
 		for (String entryTag : entryTags) {
@@ -185,7 +228,7 @@ public class InquiryDataImpl implements InquiryDataAPI {
 			tag.setName(entryTag);
 			tag.setLimit(taglimit);
 			tag.setOrder(tagorder);
-//			tag.setAggregations(aggregations);
+			tag.setAggregations(aggregations);
 			tags.add(tag);
 		}
 		datapointsQuery.setTags(tags);
