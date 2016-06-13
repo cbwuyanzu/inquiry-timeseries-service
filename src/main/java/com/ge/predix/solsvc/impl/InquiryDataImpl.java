@@ -193,11 +193,16 @@ public class InquiryDataImpl implements InquiryDataAPI {
 		String[] tagArray = id.split(","); //$NON-NLS-1$
 		List<String> entryTags = Arrays.asList(tagArray);
 		List<Aggregation> aggregations = new ArrayList<Aggregation>();
+		Aggregation aggregation = new Aggregation();
+		aggregation.setType("avg");
+		aggregation.setInterval("1h");
+		aggregations.add(aggregation);
 		for (String entryTag : entryTags) {
 			com.ge.predix.timeseries.entity.datapoints.queryrequest.Tag tag = new com.ge.predix.timeseries.entity.datapoints.queryrequest.Tag();
 			tag.setName(entryTag);
 			tag.setLimit(taglimit);
 			tag.setOrder(tagorder);
+			tag.setAggregations(aggregations);
 			tags.add(tag);
 		}
 		datapointsQuery.setTags(tags);
