@@ -1,8 +1,8 @@
 API
 ==================================================
-1.one point per day : https://cdz-inquiry-timeseries-service.run.aws-usw02-pr.ice.predix.io/services/pm25services/daily_data/sensor_id/1141A?starttime=1w-ago&endtime=1day-ago
+1.one point per day : https://cdz-inquiry-timeseries-service.run.aws-usw02-pr.ice.predix.io/services/pm25services/daily_data/sensor_id/1141A?starttime=1w-ago&endtime=1d-ago
 
-2.one point per hour: https://cdz-inquiry-timeseries-service.run.aws-usw02-pr.ice.predix.io/services/pm25services/hourly_data/sensor_id/1141A?starttime=1w-ago&endtime=1day-ago
+2.one point per hour: https://cdz-inquiry-timeseries-service.run.aws-usw02-pr.ice.predix.io/services/pm25services/hourly_data/sensor_id/1141A?starttime=1w-ago&endtime=1d-ago
 
 3.latest : https://cdz-inquiry-timeseries-service.run.aws-usw02-pr.ice.predix.io/services/pm25services/latest_data/sensor_id/1141A
 
