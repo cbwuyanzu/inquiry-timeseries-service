@@ -47,7 +47,7 @@ import com.ge.predix.timeseries.entity.datapoints.queryrequest.latest.Datapoints
 import com.ge.predix.timeseries.entity.datapoints.queryresponse.DatapointsResponse;
 
 /**
- * 
+ *
  * @author predix -
  */
 @Component
@@ -94,7 +94,7 @@ public class InquiryDataImpl implements InquiryDataAPI {
 	}
 
 	@Override
-	public Response getYearlyPm25DataPoints(String id, String authorization, String starttime, String taglimit,
+	public Response getHourlyPm25DataPoints(String id, String authorization, String starttime, String endtime, String taglimit,
 			String tagorder) {
 		if (id == null) {
 			return null;
@@ -102,7 +102,7 @@ public class InquiryDataImpl implements InquiryDataAPI {
 
 		List<Header> headers = generateHeaders();
 
-		DatapointsQuery dpQuery = buildDatapointsQueryRequest(id, starttime, getInteger(taglimit), tagorder);
+		DatapointsQuery dpQuery = buildDatapointsQueryRequest(id, starttime, endtime,getInteger(taglimit), tagorder);
 		DatapointsResponse response = this.timeseriesFactory.queryForDatapoints(this.timeseriesRestConfig.getBaseUrl(),
 				dpQuery, headers);
 		log.debug(response.toString());
@@ -111,24 +111,24 @@ public class InquiryDataImpl implements InquiryDataAPI {
 	}
 
 	@Override
-	public Response getWeeklyPm25DataPoints(String id, String authorization, String starttime, String taglimit,
+	public Response getDailyPm25DataPoints(String id, String authorization, String starttime,String endtime, String taglimit,
 			String tagorder) {
 		if (id == null) {
 			return null;
 		}
-	
+
 		List<Header> headers = generateHeaders();
-	
-		DatapointsQuery dpQuery = buildDatapointsQueryRequestWithAggregation(id, starttime, getInteger(taglimit), tagorder);
+
+		DatapointsQuery dpQuery = buildDatapointsQueryRequestWithAggregation(id, starttime, endtime, getInteger(taglimit), tagorder);
 		DatapointsResponse response = this.timeseriesFactory.queryForDatapoints(this.timeseriesRestConfig.getBaseUrl(),
 				dpQuery, headers);
 		log.debug(response.toString());
-	
+
 		return handleResult(response);
 	}
 
 	/**
-	 * 
+	 *
 	 * @param s
 	 *            -
 	 * @return
@@ -178,17 +178,18 @@ public class InquiryDataImpl implements InquiryDataAPI {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param id
 	 * @param startDuration
 	 * @param tagorder
 	 * @return
 	 */
-	private DatapointsQuery buildDatapointsQueryRequest(String id, String startDuration, int taglimit,
+	private DatapointsQuery buildDatapointsQueryRequest(String id, String startDuration, String endDuration, int taglimit,
 			String tagorder) {
 		DatapointsQuery datapointsQuery = new DatapointsQuery();
 		List<com.ge.predix.timeseries.entity.datapoints.queryrequest.Tag> tags = new ArrayList<com.ge.predix.timeseries.entity.datapoints.queryrequest.Tag>();
 		datapointsQuery.setStart(startDuration);
+		datapointsQuery.setEnd(endDuration);
 		// datapointsQuery.setStart("1y-ago"); //$NON-NLS-1$
 		String[] tagArray = id.split(","); //$NON-NLS-1$
 		List<String> entryTags = Arrays.asList(tagArray);
@@ -209,17 +210,18 @@ public class InquiryDataImpl implements InquiryDataAPI {
 		return datapointsQuery;
 	}
 	/**
-	 * 
+	 *
 	 * @param id
 	 * @param startDuration
 	 * @param tagorder
 	 * @return
 	 */
-	private DatapointsQuery buildDatapointsQueryRequestWithAggregation(String id, String startDuration, int taglimit,
+	private DatapointsQuery buildDatapointsQueryRequestWithAggregation(String id, String startDuration, String endDuration, int taglimit,
 			String tagorder) {
 		DatapointsQuery datapointsQuery = new DatapointsQuery();
 		List<com.ge.predix.timeseries.entity.datapoints.queryrequest.Tag> tags = new ArrayList<com.ge.predix.timeseries.entity.datapoints.queryrequest.Tag>();
 		datapointsQuery.setStart(startDuration);
+		datapointsQuery.setEnd(endDuration);
 		// datapointsQuery.setStart("1y-ago"); //$NON-NLS-1$
 		String[] tagArray = id.split(","); //$NON-NLS-1$
 		List<String> entryTags = Arrays.asList(tagArray);
@@ -255,7 +257,7 @@ public class InquiryDataImpl implements InquiryDataAPI {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.ge.predix.solsvc.api.WindDataAPI#getWindDataTags()
 	 */
 	@Override
@@ -288,7 +290,7 @@ public class InquiryDataImpl implements InquiryDataAPI {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param entity
 	 * @return
 	 * @throws IOException

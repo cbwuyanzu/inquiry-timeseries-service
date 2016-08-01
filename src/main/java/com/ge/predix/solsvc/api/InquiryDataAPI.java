@@ -11,7 +11,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 /**
- * 
+ *
  * @author predix -
  */
 @Consumes(
@@ -44,10 +44,11 @@ public interface InquiryDataAPI
 	 * @return -
 	 */
 	@GET
-	@Path("/yearly_data/sensor_id/{id}")
-	public Response getYearlyPm25DataPoints(@PathParam("id") String id,
+	@Path("/hourly_data/sensor_id/{id}")
+	public Response getHourlyPm25DataPoints(@PathParam("id") String id,
 			@HeaderParam(value = "Authorization") String authorization,
 			@DefaultValue("1y-ago") @QueryParam("starttime") String starttime,
+            @QueryParam("endtime") String endtime,
 			@DefaultValue("10000") @QueryParam("taglimit") String tagLimit,@DefaultValue("asc") @QueryParam("order") String tagorder);
 	/**
 	 * @param id
@@ -61,10 +62,11 @@ public interface InquiryDataAPI
 	 * @return -
 	 */
 	@GET
-	@Path("/weekly_data/sensor_id/{id}")
-	public Response getWeeklyPm25DataPoints(@PathParam("id") String id,
+	@Path("/daily_data/sensor_id/{id}")
+	public Response getDailyPm25DataPoints(@PathParam("id") String id,
 			@HeaderParam(value = "Authorization") String authorization,
 			@DefaultValue("1w-ago") @QueryParam("starttime") String starttime,
+            @QueryParam("endtime") String endtime,
 			@DefaultValue("10000") @QueryParam("taglimit") String tagLimit,@DefaultValue("asc") @QueryParam("order") String tagorder);
 
 	/**
@@ -80,18 +82,17 @@ public interface InquiryDataAPI
 			@HeaderParam(value = "authorization") String authorization);
 
 	/**
-	 * 
+	 *
 	 * @return List of tags
 	 */
 	@GET
 	@Path("/tags")
 	public Response getPm25DataTags();
 	/**
-	 * 
+	 *
 	 * @return List of tags
 	 */
 	@GET
 	@Path("/datagrid")
 	public Response getPm25DataGrid();
 }
-
