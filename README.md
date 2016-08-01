@@ -1,17 +1,18 @@
 API
 ==================================================
-1.one point per day : https://cdz-inquiry-timeseries-service.run.aws-usw02-pr.ice.predix.io/services/pm25services/weekly_data/sensor_id/1141A?starttime=1w-ago
+1.one point per day : https://cdz-inquiry-timeseries-service.run.aws-usw02-pr.ice.predix.io/services/pm25services/daily_data/sensor_id/1141A?starttime=1w-ago&endtime=1day-ago
 
-2.one point per hour: https://cdz-inquiry-timeseries-service.run.aws-usw02-pr.ice.predix.io/services/pm25services/yearly_data/sensor_id/1141A?starttime=1w-ago
+2.one point per hour: https://cdz-inquiry-timeseries-service.run.aws-usw02-pr.ice.predix.io/services/pm25services/hourly_data/sensor_id/1141A?starttime=1w-ago&endtime=1day-ago
 
 3.latest : https://cdz-inquiry-timeseries-service.run.aws-usw02-pr.ice.predix.io/services/pm25services/latest_data/sensor_id/1141A
 
-
+4.tags
+https://cdz-inquiry-timeseries-service.run.aws-usw02-pr.ice.predix.io/services/pm25services/tags
 
 Predix Development Kit Winddata Time Series Service
 ==================================================
 
-Welcome to Winddata Time Series Service. This is a back-end application built in Java and Spring. It is an extension of [predix-microservice-cf-jsr](https://github.com/PredixDev/predix-microservice-cf-jsr). The application exposes Rest APIs for getting time series tags, data points for one year, and the latest data point. 
+Welcome to Winddata Time Series Service. This is a back-end application built in Java and Spring. It is an extension of [predix-microservice-cf-jsr](https://github.com/PredixDev/predix-microservice-cf-jsr). The application exposes Rest APIs for getting time series tags, data points for one year, and the latest data point.
 
 NOTE: This application relies on setting up of UAA and Time Series service instances in the Predix Cloud. For further information on how to set up, please visit our [Exploring Time Series Journey](https://www.predix.io/resources/tutorials/journey.html#Journey.Exploring Time Series).
 
@@ -44,7 +45,7 @@ NOTE: For more info on what to set up, look at manifest.yml.template
 1. Set up the manifest.yml for Cloud deployment. Edit the manifest.yml with the names of your UAA and Time Series service instances. Also specify the predix_oauthRestHost, client_id, and secret.
 2. NOTE: For more info on what to set up, look at manifest.yml.template
 3. From the command line, login to your Cloud Foundry org and space where you would like to deploy.
-4. Run as 
+4. Run as
 ```
 cf push <appName> -f manifest.yml
 ```
@@ -55,7 +56,7 @@ cf push <appName> -f manifest.yml
  - SpringBoot
  - SpringTest
  - Maven
- 
+
 ##More Details
 
 [Exploring Time Series](https://www.predix.io/resources/tutorials/journey.html#Journey.Exploring Time Series)
