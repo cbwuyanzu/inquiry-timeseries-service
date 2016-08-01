@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
 import javax.ws.rs.core.MediaType;
@@ -94,15 +95,15 @@ public class InquiryDataImpl implements InquiryDataAPI {
 	}
 
 	@Override
-	public Response getHourlyPm25DataPoints(String id, String authorization, String starttime, String endtime, String taglimit,
-			String tagorder) {
+	public Response getHourlyPm25DataPoints(String id, String authorization, String starttime, String endtime,
+			String taglimit, String tagorder) {
 		if (id == null) {
 			return null;
 		}
 
 		List<Header> headers = generateHeaders();
 
-		DatapointsQuery dpQuery = buildDatapointsQueryRequest(id, starttime, endtime,getInteger(taglimit), tagorder);
+		DatapointsQuery dpQuery = buildDatapointsQueryRequest(id, starttime, endtime, getInteger(taglimit), tagorder);
 		DatapointsResponse response = this.timeseriesFactory.queryForDatapoints(this.timeseriesRestConfig.getBaseUrl(),
 				dpQuery, headers);
 		log.debug(response.toString());
@@ -111,15 +112,16 @@ public class InquiryDataImpl implements InquiryDataAPI {
 	}
 
 	@Override
-	public Response getDailyPm25DataPoints(String id, String authorization, String starttime,String endtime, String taglimit,
-			String tagorder) {
+	public Response getDailyPm25DataPoints(String id, String authorization, String starttime, String endtime,
+			String taglimit, String tagorder) {
 		if (id == null) {
 			return null;
 		}
 
 		List<Header> headers = generateHeaders();
 
-		DatapointsQuery dpQuery = buildDatapointsQueryRequestWithAggregation(id, starttime, endtime, getInteger(taglimit), tagorder);
+		DatapointsQuery dpQuery = buildDatapointsQueryRequestWithAggregation(id, starttime, endtime,
+				getInteger(taglimit), tagorder);
 		DatapointsResponse response = this.timeseriesFactory.queryForDatapoints(this.timeseriesRestConfig.getBaseUrl(),
 				dpQuery, headers);
 		log.debug(response.toString());
@@ -184,13 +186,22 @@ public class InquiryDataImpl implements InquiryDataAPI {
 	 * @param tagorder
 	 * @return
 	 */
-	private DatapointsQuery buildDatapointsQueryRequest(String id, String startDuration, String endDuration, int taglimit,
-			String tagorder) {
+	private DatapointsQuery buildDatapointsQueryRequest(String id, String startDuration, String endDuration,
+			int taglimit, String tagorder) {
 		DatapointsQuery datapointsQuery = new DatapointsQuery();
 		List<com.ge.predix.timeseries.entity.datapoints.queryrequest.Tag> tags = new ArrayList<com.ge.predix.timeseries.entity.datapoints.queryrequest.Tag>();
-		datapointsQuery.setStart(startDuration);
-		datapointsQuery.setEnd(endDuration);
-		// datapointsQuery.setStart("1y-ago"); //$NON-NLS-1$
+		if (isNumeric(startDuration)) {
+			datapointsQuery.setStart(Long.parseLong(startDuration));
+		} else {
+			datapointsQuery.setStart(startDuration);
+		}
+		if (endDuration != null) {
+			if (isNumeric(endDuration)) {
+				datapointsQuery.setEnd(Long.parseLong(endDuration));
+			} else {
+				datapointsQuery.setEnd(endDuration);
+			}
+		}
 		String[] tagArray = id.split(","); //$NON-NLS-1$
 		List<String> entryTags = Arrays.asList(tagArray);
 		List<Aggregation> aggregations = new ArrayList<Aggregation>();
@@ -209,6 +220,7 @@ public class InquiryDataImpl implements InquiryDataAPI {
 		datapointsQuery.setTags(tags);
 		return datapointsQuery;
 	}
+
 	/**
 	 *
 	 * @param id
@@ -216,12 +228,22 @@ public class InquiryDataImpl implements InquiryDataAPI {
 	 * @param tagorder
 	 * @return
 	 */
-	private DatapointsQuery buildDatapointsQueryRequestWithAggregation(String id, String startDuration, String endDuration, int taglimit,
-			String tagorder) {
+	private DatapointsQuery buildDatapointsQueryRequestWithAggregation(String id, String startDuration,
+			String endDuration, int taglimit, String tagorder) {
 		DatapointsQuery datapointsQuery = new DatapointsQuery();
 		List<com.ge.predix.timeseries.entity.datapoints.queryrequest.Tag> tags = new ArrayList<com.ge.predix.timeseries.entity.datapoints.queryrequest.Tag>();
-		datapointsQuery.setStart(startDuration);
-		datapointsQuery.setEnd(endDuration);
+		if (isNumeric(startDuration)) {
+			datapointsQuery.setStart(Long.parseLong(startDuration));
+		} else {
+			datapointsQuery.setStart(startDuration);
+		}
+		if (endDuration != null) {
+			if (isNumeric(endDuration)) {
+				datapointsQuery.setEnd(Long.parseLong(endDuration));
+			} else {
+				datapointsQuery.setEnd(endDuration);
+			}
+		}
 		// datapointsQuery.setStart("1y-ago"); //$NON-NLS-1$
 		String[] tagArray = id.split(","); //$NON-NLS-1$
 		List<String> entryTags = Arrays.asList(tagArray);
@@ -311,7 +333,7 @@ public class InquiryDataImpl implements InquiryDataAPI {
 		return handleResult(createDataGrid());
 	}
 
-//	@SuppressWarnings({ "nls", "unchecked" })
+	// @SuppressWarnings({ "nls", "unchecked" })
 	private String createDataGrid() {
 		String newInfo = "";
 		StringBuilder dataJson = new StringBuilder("[");
@@ -336,20 +358,15 @@ public class InquiryDataImpl implements InquiryDataAPI {
 			dataJson.append("\",\"Status\":\"");
 			if (element.getMeasure() <= 35) {
 				dataJson.append("GREEN");
-			}
-			else if(element.getMeasure()<=75){
+			} else if (element.getMeasure() <= 75) {
 				dataJson.append("YELLOW");
-			}
-			else if(element.getMeasure()<=115){
+			} else if (element.getMeasure() <= 115) {
 				dataJson.append("ORANGE");
-			}
-			else if(element.getMeasure()<=150){
+			} else if (element.getMeasure() <= 150) {
 				dataJson.append("RED");
-			}
-			else if(element.getMeasure()<=250){
+			} else if (element.getMeasure() <= 250) {
 				dataJson.append("VIOLET");
-			}
-			else{
+			} else {
 				dataJson.append("BROWN");
 			}
 			dataJson.append("\",\"UpdateTime\":\"");
@@ -414,4 +431,12 @@ public class InquiryDataImpl implements InquiryDataAPI {
 		return pm25;
 	}
 
+	public boolean isNumeric(String str) {
+		for (int i = str.length(); --i >= 0;) {
+			if (!Character.isDigit(str.charAt(i))) {
+				return false;
+			}
+		}
+		return true;
+	}
 }
